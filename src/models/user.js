@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   address: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Object,
   },
 });
 
