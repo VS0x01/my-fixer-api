@@ -1,6 +1,20 @@
 const User = require('../models/user');
 
-// GET /users
+// POST /accounts/sign-in
+exports.signIn = async (ctx, next) => {
+  ctx.body = {
+    success: true,
+  };
+};
+
+// POST /accounts/sign-up
+exports.signUp = async (ctx) => {
+  ctx.body = {
+    success: true,
+  };
+};
+
+// GET /accounts/users
 exports.index = async (ctx) => {
   const users = await User.find({});
   ctx.body = {
@@ -9,16 +23,16 @@ exports.index = async (ctx) => {
   };
 };
 
-// POST /users
+// POST /accounts/users
 exports.create = async (ctx) => {
   const user = new User(ctx.request.body);
   await user.save();
   ctx.body = {
     success: true,
-  }
+  };
 };
 
-// GET /users/1
+// GET /accounts/users/1
 exports.read = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   ctx.body = {
@@ -27,7 +41,7 @@ exports.read = async (ctx) => {
   };
 };
 
-// PATCH/PUT /users/1
+// PATCH/PUT /accounts/users/1
 exports.update = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   user.updateOne(ctx.request.body);
@@ -37,7 +51,7 @@ exports.update = async (ctx) => {
   };
 };
 
-// DELETE /users/1
+// DELETE /accounts/users/1
 exports.destroy = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   user.deleteOne();
