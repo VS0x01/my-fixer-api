@@ -1,31 +1,53 @@
+const config = require('config');
+const passport = require('koa-passport');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // POST /accounts/sign-in
 exports.signIn = async (ctx, next) => {
-  ctx.body = {
-    success: true,
-  };
-};
-
-// POST /accounts/sign-up
-exports.signUp = async (ctx) => {
-  ctx.body = {
-    success: true,
-  };
+  await passport.authenticate('local', (err, user) => {
+    if (user) {
+      const { fullName, photo } = user;
+      const payload = {
+        id: user._id,
+        role: user.role,
+      };
+      const token = jwt.sign(payload, config.get('jwtSecret'));
+      ctx.body = {
+        fullName,
+        photo,
+        token: `JWT ${token}`,
+      };
+    } else {
+      ctx.body = {
+        error: err,
+      };
+    }
+  })(ctx, next);
 };
 
 // GET /accounts/users
 exports.index = async (ctx) => {
   const users = await User.find({});
   ctx.body = {
-    success: true,
     users,
   };
 };
 
 // POST /accounts/users
 exports.create = async (ctx) => {
-  const user = new User(ctx.request.body);
+  const {
+    name: { first, last }, email, password, role,
+  } = ctx.request.body;
+  const user = new User({
+    name: {
+      first,
+      last,
+    },
+    email,
+    password,
+    role,
+  });
   await user.save();
   ctx.body = {
     success: true,
@@ -36,7 +58,6 @@ exports.create = async (ctx) => {
 exports.read = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   ctx.body = {
-    success: true,
     user,
   };
 };
@@ -44,18 +65,17 @@ exports.read = async (ctx) => {
 // PATCH/PUT /accounts/users/1
 exports.update = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
-  user.updateOne(ctx.request.body);
+  Object.assign(user, ctx.request.body);
+  user.save();
   ctx.body = {
-    success: true,
     user,
   };
 };
 
 // DELETE /accounts/users/1
 exports.destroy = async (ctx) => {
-  const user = await User.findById(ctx.params.userID);
-  user.deleteOne();
+  const user = await User.findByIdAndDelete(ctx.params.userID);
   ctx.body = {
-    success: true,
+    user,
   };
 };

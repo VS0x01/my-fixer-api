@@ -1,5 +1,6 @@
 const config = require('config');
 const mongoose = require('mongoose');
+const beautifyUnique = require('mongoose-beautiful-unique-validation');
 
 const uri = config.get('databaseUrl');
 mongoose.connect(uri, {
@@ -7,5 +8,6 @@ mongoose.connect(uri, {
   useFindAndModify: false,
   useCreateIndex: true,
 });
+mongoose.plugin(beautifyUnique);
 
 module.exports = mongoose;
