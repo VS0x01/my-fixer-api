@@ -10,6 +10,7 @@
         | Method        | Endpoint          |
         |:-------------:|:-----------------:|
         | POST          | /accounts/sign-in |
+        | GET           | /accounts/token   |
     
     - CRUD:
     
