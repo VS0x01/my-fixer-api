@@ -1,22 +1,23 @@
-const config = require('config');
 const passport = require('koa-passport');
-const jwt = require('jsonwebtoken');
+const jwt = require('../../utils/jwt');
 const User = require('../models/user');
 
 // POST /accounts/sign-in
 exports.signIn = async (ctx, next) => {
-  await passport.authenticate('local', (err, user) => {
+  await passport.authenticate('local', async (err, user) => {
     if (user) {
       const { fullName, photo } = user;
       const payload = {
         id: user._id,
         role: user.role,
       };
-      const token = jwt.sign(payload, config.get('jwtSecret'));
+      const tokens = await jwt.generateAndUpdateTokens(payload, user._id);
+      const { accessToken, refreshToken } = tokens;
       ctx.body = {
         fullName,
         photo,
-        token: `JWT ${token}`,
+        accessToken,
+        refreshToken: `JWT ${refreshToken.token}`,
       };
     } else {
       ctx.body = {
@@ -24,6 +25,14 @@ exports.signIn = async (ctx, next) => {
       };
     }
   })(ctx, next);
+};
+
+// GET /accounts/token
+exports.token = async (ctx) => {
+  // TODO: Validate refresh token and conditionally generate new pair
+  ctx.body = {
+    success: true,
+  };
 };
 
 // GET /accounts

@@ -6,6 +6,7 @@ const router = new Router();
 
 // Auth
 router.post('/sign-in', usersController.signIn);
+router.get('/token', usersController.token);
 
 // CRUD
 router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);
