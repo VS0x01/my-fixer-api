@@ -3,9 +3,8 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const Router = require('koa-router');
 const helmet = require('koa-helmet');
-
 require('./src/utils/mongoose');
-require('./src/utils/passport/index').initialize();
+const passport = require('./src/utils/passport/index');
 
 const app = new Koa();
 
@@ -14,6 +13,8 @@ app.use(helmet());
 app.use(bodyParser({
   multipart: true,
 }));
+
+app.use(passport.initialize());
 
 app.use(async (ctx, next) => {
   try {
