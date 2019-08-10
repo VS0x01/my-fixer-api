@@ -8,10 +8,10 @@ const router = new Router();
 router.post('/sign-in', usersController.signIn);
 
 // CRUD
-router.get('/users', passport.authenticate('jwt', { session: false }), usersController.index);
-router.post('/users', usersController.create);
-router.get('/users/:userID', usersController.read);
-router.put('/users/:userID', usersController.update);
-router.delete('/users/:userID', usersController.destroy);
+router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);
+router.post('/', usersController.create);
+router.get('/:userID', usersController.read);
+router.put('/:userID', usersController.update);
+router.delete('/:userID', usersController.destroy);
 
 module.exports = router;

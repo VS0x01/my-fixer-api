@@ -1,4 +1,22 @@
 # my-fixer
-DB2 internship homework
+## DB2 internship homework
 
-myFixer API
+### myFixer API
+
+- Accounts: 
+
+    - Auth: 
+
+        | Method        | Endpoint          |
+        |:-------------:|:-----------------:|
+        | POST          | /accounts/sign-in |
+    
+    - CRUD:
+    
+        | Method        | Endpoint          |
+        |:-------------:| ----------------- |
+        | GET           | /accounts         |
+        | POST          | /accounts         |
+        | GET           | /accounts/:id     |
+        | PATCH/PUT     | /accounts/:id     |
+        | DELETE        | /accounts/:id     |

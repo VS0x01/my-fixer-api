@@ -26,7 +26,7 @@ exports.signIn = async (ctx, next) => {
   })(ctx, next);
 };
 
-// GET /accounts/users
+// GET /accounts
 exports.index = async (ctx) => {
   const users = await User.find({});
   ctx.body = {
@@ -34,7 +34,7 @@ exports.index = async (ctx) => {
   };
 };
 
-// POST /accounts/users
+// POST /accounts
 exports.create = async (ctx) => {
   const {
     name: { first, last }, email, password, role,
@@ -54,7 +54,7 @@ exports.create = async (ctx) => {
   };
 };
 
-// GET /accounts/users/1
+// GET /accounts/1
 exports.read = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   ctx.body = {
@@ -62,7 +62,7 @@ exports.read = async (ctx) => {
   };
 };
 
-// PATCH/PUT /accounts/users/1
+// PATCH/PUT /accounts/1
 exports.update = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   Object.assign(user, ctx.request.body);
@@ -72,7 +72,7 @@ exports.update = async (ctx) => {
   };
 };
 
-// DELETE /accounts/users/1
+// DELETE /accounts/1
 exports.destroy = async (ctx) => {
   const user = await User.findByIdAndDelete(ctx.params.userID);
   ctx.body = {
