@@ -5,7 +5,7 @@ const { ExtractJwt } = require('passport-jwt');
 const User = require('../../accounts/models/user');
 
 const opts = {
-  secretOrKey: config.get('jwtSecret'),
+  secretOrKey: config.get('jwtSecret').accessToken.secret,
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
 };
 

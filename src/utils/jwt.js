@@ -44,4 +44,9 @@ const generateAndUpdateTokens = async (payload, userID) => {
   };
 };
 
-module.exports = { generateAndUpdateTokens };
+const verifyRefreshToken = async token => jwt.verify(token.replace(/JWT/, '').trim(), config.get('jwtSecret').refreshToken.secret, { json: true });
+
+module.exports = {
+  generateAndUpdateTokens,
+  verifyRefreshToken,
+};

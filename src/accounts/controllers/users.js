@@ -1,6 +1,7 @@
 const passport = require('koa-passport');
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
+const Token = require('../models/token');
 
 // POST /accounts/sign-in
 exports.signIn = async (ctx, next) => {
@@ -29,9 +30,16 @@ exports.signIn = async (ctx, next) => {
 
 // GET /accounts/token
 exports.token = async (ctx) => {
-  // TODO: Validate refresh token and conditionally generate new pair
+  const decoded = await jwt.verifyRefreshToken(ctx.header.authorization);
+  const token = await Token.findOne({ tokenID: decoded.id });
+  // TODO: Add conditions
+  const payload = {
+    id: 1,
+  };
+  const tokens = await jwt.generateAndUpdateTokens(payload, token.userID);
   ctx.body = {
-    success: true,
+    accessToken: tokens.accessToken,
+    refreshToken: `JWT ${tokens.refreshToken.token}`,
   };
 };
 
