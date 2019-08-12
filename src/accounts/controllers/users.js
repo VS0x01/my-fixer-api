@@ -88,7 +88,7 @@ exports.read = async (ctx) => {
 exports.update = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   Object.assign(user, ctx.request.body);
-  user.save();
+  await user.save();
   ctx.body = {
     user,
   };
