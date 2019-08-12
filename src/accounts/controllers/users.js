@@ -30,13 +30,18 @@ exports.signIn = async (ctx, next) => {
 
 // GET /accounts/token
 exports.token = async (ctx) => {
-  const decoded = await jwt.verifyRefreshToken(ctx.header.authorization);
-  const token = await Token.findOne({ tokenID: decoded.id });
-  // TODO: Add conditions
+  const decodedRefreshToken = await jwt.verifyRefreshToken(ctx.header.authorization);
+  const refreshToken = await Token.findOne({ tokenID: decodedRefreshToken.id });
+  if (!refreshToken) {
+    ctx.throw(404, 'token not found');
+  } else if (decodedRefreshToken.type !== 'refresh') ctx.throw(404, 'invalid token');
+
+  const user = await User.findById(refreshToken.userID);
   const payload = {
-    id: 1,
+    id: user._id,
+    role: user.role,
   };
-  const tokens = await jwt.generateAndUpdateTokens(payload, token.userID);
+  const tokens = await jwt.generateAndUpdateTokens(payload, refreshToken.userID);
   ctx.body = {
     accessToken: tokens.accessToken,
     refreshToken: `JWT ${tokens.refreshToken.token}`,

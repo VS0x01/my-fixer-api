@@ -3,18 +3,18 @@ module.exports = {
   databaseUrl: process.env.DATABASE_URL,
   crypto: {
     hash: {
-      length: 128,
-      iterations: 100000,
+      length: process.env.CRYPTO_HASH_LENGTH,
+      iterations: process.env.CRYPTO_HASH_LENGTH_ITERATIONS,
     },
   },
   jwtSecret: {
     accessToken: {
       secret: process.env.JWT_SECRET_ACCESS_TOKEN,
-      expirationTime: '1h',
+      expirationTime: process.env.JWT_SECRET_ACCESS_TOKEN_EXPIRATION_TIME,
     },
     refreshToken: {
       secret: process.env.JWT_SECRET_REFRESH_TOKEN,
-      expirationTime: '1d',
+      expirationTime: process.env.JWT_SECRET_REFRESH_TOKEN_EXPIRATION_TIME,
     },
   },
 };
