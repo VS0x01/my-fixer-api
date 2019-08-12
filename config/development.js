@@ -17,4 +17,7 @@ module.exports = {
       expirationTime: '3m',
     },
   },
+  mailing: {
+    apiKey: process.env.SENDGRID_API_KEY,
+  },
 };

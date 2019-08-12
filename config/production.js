@@ -17,4 +17,7 @@ module.exports = {
       expirationTime: process.env.JWT_SECRET_REFRESH_TOKEN_EXPIRATION_TIME,
     },
   },
+  mailing: {
+    apiKey: process.env.SENDGRID_API_KEY,
+  },
 };

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const sendEmail = require('../../utils/mailing');
 const passport = require('koa-passport');
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
@@ -45,6 +47,26 @@ exports.token = async (ctx) => {
   ctx.body = {
     accessToken: tokens.accessToken,
     refreshToken: `JWT ${tokens.refreshToken.token}`,
+  };
+};
+
+// POST /accounts/mail
+exports.emailSend = async (ctx) => {
+  const attachments = [
+    {
+      content: Buffer.from(fs.readFileSync('./src/assets/sarah_freeman.png')).toString('base64'),
+      filename: 'sarah_freeman.png',
+    },
+  ];
+  await sendEmail(
+      'vadim.a.shesterikov@gmail.com',
+      'notifications@example.com',
+      'Hello world!',
+      '<p>Hello form myFixer</p>',
+      attachments,
+  );
+  ctx.body = {
+    success: true,
   };
 };
 

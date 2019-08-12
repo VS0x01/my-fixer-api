@@ -8,6 +8,9 @@ const router = new Router();
 router.post('/sign-in', usersController.signIn);
 router.get('/token', usersController.token);
 
+//Mailing
+router.post('/mail', usersController.emailSend);
+
 // CRUD
 router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);
 router.post('/', usersController.create);
