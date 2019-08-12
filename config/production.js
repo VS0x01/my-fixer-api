@@ -3,8 +3,8 @@ module.exports = {
   databaseUrl: process.env.DATABASE_URL,
   crypto: {
     hash: {
-      length: process.env.CRYPTO_HASH_LENGTH,
-      iterations: process.env.CRYPTO_HASH_LENGTH_ITERATIONS,
+      length: Number(process.env.CRYPTO_HASH_LENGTH),
+      iterations: Number(process.env.CRYPTO_HASH_LENGTH_ITERATIONS),
     },
   },
   jwtSecret: {
