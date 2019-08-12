@@ -7,5 +7,14 @@ module.exports = {
       iterations: 100000,
     },
   },
-  jwtSecret: 'McQfTjWnZr4u7x!A',
+  jwtSecret: {
+    accessToken: {
+      secret: 'McQfTjWnZr4u7x!A',
+      expirationTime: '2m',
+    },
+    refreshToken: {
+      secret: '214c75df7b7424bdd89630bbe49eb2452075af582309fab40efdb53d107edde9',
+      expirationTime: '3m',
+    },
+  },
 };

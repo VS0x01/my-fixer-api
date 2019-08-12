@@ -21,13 +21,13 @@ app.use(async (ctx, next) => {
     await next();
   } catch (err) {
     console.log(err);
-    const errors = [];
+    /* const errors = [];
     Object.keys(err.errors).forEach((key) => {
       errors.push(err.errors[key].message);
-    });
+    }); */
     ctx.status = 500;
     ctx.body = {
-      errors,
+      err,
     };
   }
 });
