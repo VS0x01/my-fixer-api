@@ -1,5 +1,8 @@
 module.exports = {
   port: process.env.PORT,
+  cors: {
+    origin: process.env.CLIENT_DOMAIN,
+  },
   databaseUrl: process.env.DATABASE_URL,
   crypto: {
     hash: {

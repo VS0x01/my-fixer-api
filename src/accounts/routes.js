@@ -8,7 +8,7 @@ const router = new Router();
 router.post('/sign-in', usersController.signIn);
 router.get('/token', usersController.token);
 
-//Mailing
+// Mailing
 router.post('/mail', usersController.emailSend);
 
 // CRUD

@@ -1,6 +1,6 @@
 const fs = require('fs');
-const sendEmail = require('../../utils/mailing');
 const passport = require('koa-passport');
+const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
 const Token = require('../models/token');
@@ -59,11 +59,11 @@ exports.emailSend = async (ctx) => {
     },
   ];
   await sendEmail(
-      'vadim.a.shesterikov@gmail.com',
-      'notifications@example.com',
-      'Hello world!',
-      '<p>Hello form myFixer</p>',
-      attachments,
+    'vadim.a.shesterikov@gmail.com',
+    'notifications@example.com',
+    'Hello world!',
+    '<p>Hello form myFixer</p>',
+    attachments,
   );
   ctx.body = {
     success: true,
