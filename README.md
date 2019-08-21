@@ -11,12 +11,6 @@
         |:-------------:|:-----------------:|
         | POST          | /accounts/sign-in |
         | GET           | /accounts/token   |
-        
-    - Mailing
-    
-        | Method        | Endpoint          |
-        |:-------------:|:-----------------:|
-        | POST          | /accounts/mail    |
     
     - CRUD:
     

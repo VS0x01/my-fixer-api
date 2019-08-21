@@ -1,5 +1,5 @@
 module.exports = {
-  port: 4567,
+  port: 3000,
   cors: {
     origin: 'http://localhost:8080',
   },
@@ -19,6 +19,12 @@ module.exports = {
       secret: '214c75df7b7424bdd89630bbe49eb2452075af582309fab40efdb53d107edde9',
       expirationTime: '3m',
     },
+  },
+  aws: {
+    accessKeyID: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    bucketName: 'vs0x01-myfixer',
+    userPhotoFolder: 'user-photos',
   },
   mailing: {
     apiKey: process.env.SENDGRID_API_KEY,

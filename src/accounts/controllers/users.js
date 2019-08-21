@@ -1,4 +1,6 @@
+const config = require('config');
 const fs = require('fs');
+const uploadS3 = require('../../utils/uploadS3');
 const passport = require('koa-passport');
 const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
@@ -50,6 +52,10 @@ exports.token = async (ctx) => {
   };
 };
 
+
+/****************
+ * Test services
+ ****************/
 // POST /accounts/mail
 exports.emailSend = async (ctx) => {
   const attachments = [
@@ -69,6 +75,17 @@ exports.emailSend = async (ctx) => {
     success: true,
   };
 };
+
+exports.updatePhoto = async (ctx) => {
+  const photo = await uploadS3(config.get('aws').userPhotoFolder, ctx.request.files.photo);
+  await User.findByIdAndUpdate(ctx.state.user._id, { photo });
+  ctx.body = {
+    photo,
+  };
+};
+/********************
+ * End test services
+ ********************/
 
 // GET /accounts
 exports.index = async (ctx) => {

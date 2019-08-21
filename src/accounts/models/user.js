@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: 'https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png',
+    default: 'https://vs0x01-myfixer.s3.eu-central-1.amazonaws.com/avatar_circle_blue_512dp.png',
   },
   country: {
     type: String,

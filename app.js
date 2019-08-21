@@ -2,10 +2,10 @@ const config = require('config');
 const Koa = require('koa');
 const cors = require('@koa/cors');
 const helmet = require('koa-helmet');
-const bodyParser = require('koa-bodyparser');
+const bodyParser = require('koa-body')({multipart:true});
 const Router = require('koa-router');
-require('./src/utils/mongoose');
-const passport = require('./src/utils/passport/index');
+require('./src/libs/mongoose');
+const passport = require('./src/libs/passport/index');
 
 const app = new Koa();
 
@@ -14,26 +14,28 @@ app.use(cors({
 }));
 app.use(helmet());
 
-app.use(bodyParser({
-  multipart: true,
-}));
+app.use(bodyParser);
 
 app.use(passport.initialize());
 
 app.use(async (ctx, next) => {
-  console.log(ctx.request.body);
   try {
     await next();
   } catch (err) {
-    console.log(err);
-    const errors = [];
-    Object.keys(err.errors).forEach((key) => {
-      errors.push(err.errors[key].message);
-    });
     ctx.status = 500;
-    ctx.body = {
-      errors,
-    };
+    if (err.hasOwnProperty('errors')) {
+      const errors = [];
+      Object.keys(err.errors).forEach((key) => {
+        errors.push(err.errors[key].message);
+      });
+      ctx.body = {
+        errors,
+      };
+    } else {
+      ctx.body = {
+        error: err.message,
+      };
+    }
   }
 });
 
