@@ -1,7 +1,7 @@
 const config = require('config');
 const fs = require('fs');
-const uploadS3 = require('../../utils/uploadS3');
 const passport = require('koa-passport');
+const uploadS3 = require('../../utils/uploadS3');
 const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
@@ -53,9 +53,9 @@ exports.token = async (ctx) => {
 };
 
 
-/****************
+/** **************
  * Test services
- ****************/
+ *************** */
 // POST /accounts/mail
 exports.emailSend = async (ctx) => {
   const attachments = [
@@ -83,9 +83,9 @@ exports.updatePhoto = async (ctx) => {
     photo,
   };
 };
-/********************
+/** ******************
  * End test services
- ********************/
+ ******************* */
 
 // GET /accounts
 exports.index = async (ctx) => {

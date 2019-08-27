@@ -30,6 +30,7 @@
     "mongoose-beautiful-unique-validation": "^7.1.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "strong-params": "^1.0.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -40,7 +41,7 @@
     "nodemon": "^1.19.1"
   },
   "engines": {
-    "node": "10.16.0",
-    "npm": "6.10.2"
+    "node": "10.16.3",
+    "npm": "6.9.0"
   }
 }
