@@ -7,11 +7,9 @@ const router = new Router();
 // Auth
 router.post('/sign-in', usersController.signIn);
 router.get('/token', usersController.token);
+router.post('/confirm', usersController.emailSend);
 
-/** TEST * */
-router.post('/mail', usersController.emailSend);
-router.put('/photo', passport.authenticate('jwt', { session: false }), usersController.updatePhoto);
-/** end TEST * */
+//router.put('/photo', passport.authenticate('jwt', { session: false }), usersController.updatePhoto);
 
 // CRUD
 router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);

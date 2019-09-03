@@ -3,8 +3,8 @@ const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(config.get('mailing').apiKey);
 
-module.exports = (to, from, subject, html, attachments) => {
-  sgMail.send({
+module.exports = async (to, from, subject, html, attachments) => {
+  await sgMail.send({
     to,
     from,
     subject,

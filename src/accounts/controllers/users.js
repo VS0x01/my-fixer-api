@@ -1,11 +1,15 @@
 const config = require('config');
+const path = require('path');
 const fs = require('fs');
 const passport = require('koa-passport');
 const uploadS3 = require('../../utils/uploadS3');
+const nunjucks = require('nunjucks');
 const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
 const Token = require('../models/token');
+
+nunjucks.configure(path.join(__dirname, '../templates'), { autoescape: true });
 
 // POST /accounts/sign-in
 exports.signIn = async (ctx, next) => {
@@ -52,11 +56,7 @@ exports.token = async (ctx) => {
   };
 };
 
-
-/** **************
- * Test services
- *************** */
-// POST /accounts/mail
+// POST /accounts/confirm
 exports.emailSend = async (ctx) => {
   const attachments = [
     {
@@ -64,28 +64,37 @@ exports.emailSend = async (ctx) => {
       filename: 'sarah_freeman.png',
     },
   ];
+  const origin = ctx.request.headers.referer;
+  console.log(ctx, origin);
+  const tokens = await jwt.generateAndUpdateTokens({
+    id: 'tmpHardcodedUserID',
+    role: 'tmpHardcodedUserRole'
+  });
+
   await sendEmail(
     'vadim.a.shesterikov@gmail.com',
-    'notifications@example.com',
-    'Hello world!',
-    '<p>Hello form myFixer</p>',
+    'service@myfixer.com',
+    'Account confirmation',
+    nunjucks.render('confirm_account.njk', {
+      user: 'tmpHardcodedUser',
+      origin,
+      token: tokens.accessToken,
+    }),
     attachments,
   );
   ctx.body = {
-    success: true,
+    accessToken: `JWT ${tokens.accessToken}`,
+    refreshToken: `JWT ${tokens.refreshToken.token}`,
   };
 };
 
-exports.updatePhoto = async (ctx) => {
+/*exports.updatePhoto = async (ctx) => {
   const photo = await uploadS3(config.get('aws').userPhotoFolder, ctx.request.files.photo);
   await User.findByIdAndUpdate(ctx.state.user._id, { photo });
   ctx.body = {
     photo,
   };
-};
-/** ******************
- * End test services
- ******************* */
+};*/
 
 // GET /accounts
 exports.index = async (ctx) => {
