@@ -29,14 +29,12 @@ const generateRefreshToken = () => {
 };
 
 const generateAndUpdateTokens = async (payload, userID) => {
-  const accessToken = `JWT ${generateAccessToken(payload)}`;
+  const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken();
 
-  const update = Token.findOneAndUpdate({ userID }, {
+  await Token.findOneAndUpdate({ userID }, {
     tokenID: refreshToken.id,
-    userID,
-  }, { upsert: true });
-  await update.exec();
+  });
 
   return {
     accessToken,

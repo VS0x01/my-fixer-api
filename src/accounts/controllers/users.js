@@ -47,7 +47,7 @@ exports.token = async (ctx) => {
   };
   const tokens = await jwt.generateAndUpdateTokens(payload, refreshToken.userID);
   ctx.body = {
-    accessToken: tokens.accessToken,
+    accessToken: `JWT ${tokens.accessToken}`,
     refreshToken: `JWT ${tokens.refreshToken.token}`,
   };
 };
