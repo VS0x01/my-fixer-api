@@ -2,8 +2,8 @@ const config = require('config');
 const path = require('path');
 const fs = require('fs');
 const passport = require('koa-passport');
-const uploadS3 = require('../../utils/uploadS3');
 const nunjucks = require('nunjucks');
+const uploadS3 = require('../../utils/uploadS3');
 const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
@@ -15,7 +15,7 @@ nunjucks.configure(path.join(__dirname, '../templates'), { autoescape: true });
 exports.signIn = async (ctx, next) => {
   await passport.authenticate('local', async (err, user) => {
     if (user) {
-      const { fullName, photo } = user;
+      const { fullName, email, photo } = user;
       const payload = {
         id: user._id,
         role: user.role,
@@ -23,9 +23,12 @@ exports.signIn = async (ctx, next) => {
       const tokens = await jwt.generateAndUpdateTokens(payload, user._id);
       const { accessToken, refreshToken } = tokens;
       ctx.body = {
-        fullName,
-        photo,
-        accessToken,
+        user: {
+          fullName,
+          email,
+          photo,
+        },
+        accessToken: `JWT ${accessToken}`,
         refreshToken: `JWT ${refreshToken.token}`,
       };
     } else {
@@ -68,7 +71,7 @@ exports.emailSend = async (ctx) => {
   console.log(ctx, origin);
   const tokens = await jwt.generateAndUpdateTokens({
     id: 'tmpHardcodedUserID',
-    role: 'tmpHardcodedUserRole'
+    role: 'tmpHardcodedUserRole',
   });
 
   await sendEmail(
@@ -88,13 +91,13 @@ exports.emailSend = async (ctx) => {
   };
 };
 
-/*exports.updatePhoto = async (ctx) => {
+/* exports.updatePhoto = async (ctx) => {
   const photo = await uploadS3(config.get('aws').userPhotoFolder, ctx.request.files.photo);
   await User.findByIdAndUpdate(ctx.state.user._id, { photo });
   ctx.body = {
     photo,
   };
-};*/
+}; */
 
 // GET /accounts
 exports.index = async (ctx) => {

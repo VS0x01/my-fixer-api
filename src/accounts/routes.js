@@ -9,7 +9,7 @@ router.post('/sign-in', usersController.signIn);
 router.get('/token', usersController.token);
 router.post('/confirm', usersController.emailSend);
 
-//router.put('/photo', passport.authenticate('jwt', { session: false }), usersController.updatePhoto);
+// router.put('/photo', passport.authenticate('jwt', { session: false }), usersController.updatePhoto);
 
 // CRUD
 router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);
