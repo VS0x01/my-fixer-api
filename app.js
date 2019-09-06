@@ -38,23 +38,26 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    console.log(err);
-    const { statusCode, message } = err;
+    const errors = [];
+    const { name, statusCode, message } = err;
 
     ctx.status = statusCode || 500;
-    if (err.hasOwnProperty('errors')) {
-      const errors = [];
+    if (err.errors) {
       Object.keys(err.errors).forEach((key) => {
-        errors.push(err.errors[key].message);
+        errors.push({
+          name: key,
+          message: err.errors[key].message,
+        });
       });
-      ctx.body = {
-        errors,
-      };
     } else {
-      ctx.body = {
-        error: message,
-      };
+      errors.push({
+        name,
+        message,
+      });
     }
+    ctx.body = {
+      errors,
+    };
   }
 });
 
