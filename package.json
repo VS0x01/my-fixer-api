@@ -9,7 +9,7 @@
     "lint:fix": "eslint --fix --ext js .",
     "nodemon": "nodemon app.js",
     "fixtures": "node ./src/fixtures/load.js",
-    "test": "mocha --exit"
+    "test": "mocha --timeout=30000 --exit"
   },
   "keywords": [],
   "author": "VS0x01",
