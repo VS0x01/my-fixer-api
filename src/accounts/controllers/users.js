@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const passport = require('koa-passport');
 const nunjucks = require('nunjucks');
+const ServerError = require('../../utils/ServerError');
 const uploadS3 = require('../../utils/uploadS3');
 const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
@@ -32,9 +33,7 @@ exports.signIn = async (ctx, next) => {
         refreshToken: `JWT ${refreshToken.token}`,
       };
     } else {
-      ctx.body = {
-        error: err,
-      };
+      throw new ServerError(403, err);
     }
   })(ctx, next);
 };
@@ -44,8 +43,8 @@ exports.token = async (ctx) => {
   const decodedRefreshToken = await jwt.verifyRefreshToken(ctx.header.authorization);
   const refreshToken = await Token.findOne({ tokenID: decodedRefreshToken.id });
   if (!refreshToken) {
-    ctx.throw(404, 'token not found');
-  } else if (decodedRefreshToken.type !== 'refresh') ctx.throw(404, 'invalid token');
+    throw new ServerError(404, 'token not found');
+  } else if (decodedRefreshToken.type !== 'refresh') throw new ServerError(403, 'invalid token');
 
   const user = await User.findById(refreshToken.userID);
   const payload = {

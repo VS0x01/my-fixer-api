@@ -38,7 +38,10 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    ctx.status = 500;
+    console.log(err);
+    const { statusCode, message } = err;
+
+    ctx.status = statusCode || 500;
     if (err.hasOwnProperty('errors')) {
       const errors = [];
       Object.keys(err.errors).forEach((key) => {
@@ -49,7 +52,7 @@ app.use(async (ctx, next) => {
       };
     } else {
       ctx.body = {
-        error: err.message,
+        error: message,
       };
     }
   }
