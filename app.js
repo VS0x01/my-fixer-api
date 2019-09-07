@@ -10,7 +10,6 @@ require('./src/libs/mongoose');
 const swagger = require('koa2-swagger-ui');
 const passport = require('./src/libs/passport/index');
 
-
 const app = new Koa();
 
 app.use(cors({
@@ -31,6 +30,7 @@ app.use(
 );
 
 app.use(bodyParser);
+app.use(params.koaMiddleware());
 
 app.use(passport.initialize());
 
