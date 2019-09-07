@@ -36,12 +36,20 @@ const userSchema = new mongoose.Schema({
       message: props => `${props.value} is not a valid email.`,
     },
   },
+  confirmed: {
+    type: Boolean,
+    default: false,
+  },
   encryptedPassword: {
     type: String,
   },
   salt: {
     type: String,
   },
+  tokens: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Token',
+  }]
 });
 
 userSchema.virtual('fullName').get(function () {
@@ -49,7 +57,7 @@ userSchema.virtual('fullName').get(function () {
 });
 
 userSchema.virtual('password')
-  .set(function (password) {
+  .set((password) => {
     if (password !== undefined) {
       if (!password) this.invalidate('password', 'Password can\'t be empty!');
       else if (password.length < 6) this.invalidate('password', 'Password can\'t be less than 6 symbols!');
@@ -65,7 +73,7 @@ userSchema.virtual('password')
     }
   });
 
-userSchema.methods.checkPassword = function (password) {
+userSchema.methods.checkPassword = (password) => {
   if (!(password && this.encryptedPassword)) return false;
   return crypto
     .pbkdf2Sync(password, this.salt, config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
