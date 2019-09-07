@@ -25,6 +25,7 @@ module.exports = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     bucketName: process.env.AWS_BUCKET_NAME,
     userPhotoFolder: process.env.AWS_USER_PHOTO_FOLDER,
+    defaultUserPhoto: process.env.DEFAULT_USER_PHOTO,
   },
   mailing: {
     apiKey: process.env.SENDGRID_API_KEY,

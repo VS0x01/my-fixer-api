@@ -4,10 +4,8 @@ const { ObjectId } = require('mongodb');
 
 module.exports = [
   {
-    name: {
-      first: 'Test',
-      last: 'Admin',
-    },
+    firstName: 'Test',
+    lastName: 'Admin',
     role: 'admin',
     country: 'Ukraine',
     email: 'test@example.com',
@@ -19,10 +17,8 @@ module.exports = [
   },
   {
     _id: ObjectId(),
-    name: {
-      first: 'Carmine',
-      last: 'Max',
-    },
+    firstName: 'Carmine',
+    lastName: 'Max',
     role: 'admin',
     country: 'Ukraine',
     email: 'admin.email@example.com',
@@ -34,10 +30,8 @@ module.exports = [
   },
   {
     _id: ObjectId(),
-    name: {
-      first: 'Jimmy',
-      last: 'Min',
-    },
+    firstName: 'Jimmy',
+    lastName: 'Min',
     role: 'user',
     country: 'Canada',
     email: 'user.email@example.com',

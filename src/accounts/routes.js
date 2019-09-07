@@ -8,15 +8,13 @@ const router = new Router();
 router.post('/sign-in', usersController.signIn);
 router.get('/token', usersController.token);
 router.delete('/token', passport.authenticate('jwt', { session: false }), usersController.logout);
-router.post('/confirm', usersController.emailSend);
-
-// router.put('/photo', passport.authenticate('jwt', { session: false }), usersController.updatePhoto);
+router.post('/confirm', usersController.sendEmailConfirmation);
 
 // CRUD
 router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);
 router.post('/', usersController.create);
-router.get('/:userID', usersController.read);
-router.put('/:userID', usersController.update);
-router.delete('/:userID', usersController.destroy);
+router.get('/:userID', passport.authenticate('jwt', { session: false }), usersController.read);
+router.put('/:userID', passport.authenticate('jwt', { session: false }), usersController.update);
+router.delete('/:userID', passport.authenticate('jwt', { session: false }), usersController.destroy);
 
 module.exports = router;

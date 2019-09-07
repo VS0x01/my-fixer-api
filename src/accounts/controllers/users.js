@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const config = require('config');
 const path = require('path');
 const fs = require('fs');
@@ -16,7 +17,6 @@ nunjucks.configure(path.join(__dirname, '../templates'), { autoescape: true });
 exports.signIn = async (ctx, next) => {
   await passport.authenticate('local', async (err, user) => {
     if (user) {
-      const { fullName, email, photo } = user;
       const payload = {
         id: user._id,
         role: user.role,
@@ -25,11 +25,7 @@ exports.signIn = async (ctx, next) => {
       const tokens = await jwt.generateAuthTokens(payload, user);
       const { accessToken, refreshToken } = tokens;
       ctx.body = {
-        user: {
-          fullName,
-          email,
-          photo,
-        },
+        user: user.toJSON(),
         accessToken: `JWT ${accessToken}`,
         refreshToken: `JWT ${refreshToken}`,
       };
@@ -65,10 +61,10 @@ exports.token = async (ctx) => {
 // DELETE /accounts/token
 exports.logout = async (ctx) => {
   const { all, refreshToken } = ctx.parameters.permit('all', 'refreshToken').value();
-  if(all) {
+  if (all) {
     await Token.deleteMany({ user: ctx.state.user._id });
-  } else if(refreshToken) {
-    const decodedRefreshToken = jwt.verifyRefreshToken(refreshToken);
+  } else if (refreshToken) {
+    const decodedRefreshToken = jwt.verifyToken(refreshToken, config.get('jwtSecret').refreshToken.secret);
     await Token.findOneAndRemove(decodedRefreshToken._id);
   }
   ctx.body = {
@@ -77,48 +73,49 @@ exports.logout = async (ctx) => {
 };
 
 // POST /accounts/confirm
-exports.emailSend = async (ctx) => {
-  const attachments = [
-    {
-      content: Buffer.from(fs.readFileSync('./src/assets/sarah_freeman.png')).toString('base64'),
-      filename: 'sarah_freeman.png',
-    },
-  ];
-  const origin = ctx.request.headers.referer;
-  console.log(ctx, origin);
-  const tokens = await jwt.generateAndUpdateTokens({
-    id: 'tmpHardcodedUserID',
-    role: 'tmpHardcodedUserRole',
-  });
+exports.sendEmailConfirmation = async (ctx) => {
+  const { confirmToken } = ctx.parameters.permit('token').value();
 
-  await sendEmail(
-    'vadim.a.shesterikov@gmail.com',
-    'service@myfixer.com',
-    'Account confirmation',
-    nunjucks.render('confirm_account.njk', {
-      user: 'tmpHardcodedUser',
-      origin,
-      token: tokens.accessToken,
-    }),
-    attachments,
-  );
-  ctx.body = {
-    accessToken: `JWT ${tokens.accessToken}`,
-    refreshToken: `JWT ${tokens.refreshToken.token}`,
-  };
+  if (confirmToken) {
+    const verifiedConfirmToken = jwt.verifyToken(confirmToken, config.get('jwtSecret').accessToken.secret);
+    if(verifiedConfirmToken.type === "confirm") {
+      User.findByIdAndUpdate(verifiedConfirmToken._id, {confirmed: true});
+    }
+  } else {
+    const { _id, firstName, lastName } = ctx.request.body;
+    const attachments = [
+      {
+        content: Buffer.from(fs.readFileSync('./src/assets/logo.png')).toString('base64'),
+        filename: 'logo.png',
+      },
+    ];
+    const origin = ctx.request.headers.referer;
+    const token = await jwt.generateToken({
+      _id,
+      type: 'confirm',
+    }, config.get('jwtSecret').accessToken);
+
+    await sendEmail(
+      'vadim.a.shesterikov@gmail.com',
+      'service@myfixer.com',
+      'Account confirmation',
+      nunjucks.render('confirm_account.njk', {
+        user: `${firstName} ${lastName}`,
+        origin,
+        token,
+      }),
+      attachments,
+    );
+    ctx.body = {
+      status: 'Confirmation pending',
+    };
+  }
 };
-
-/* exports.updatePhoto = async (ctx) => {
-  const photo = await uploadS3(config.get('aws').userPhotoFolder, ctx.request.files.photo);
-  await User.findByIdAndUpdate(ctx.state.user._id, { photo });
-  ctx.body = {
-    photo,
-  };
-}; */
 
 // GET /accounts
 exports.index = async (ctx) => {
   const users = await User.find({});
+  users.forEach(user => user.toJSON());
   ctx.body = {
     users,
   };
@@ -127,20 +124,17 @@ exports.index = async (ctx) => {
 // POST /accounts
 exports.create = async (ctx) => {
   const {
-    name: { first, last }, email, password, role,
+    firstName, lastName, email, password,
   } = ctx.request.body;
   const user = new User({
-    name: {
-      first,
-      last,
-    },
+    firstName,
+    lastName,
     email,
     password,
-    role,
   });
   await user.save();
   ctx.body = {
-    success: true,
+    user: user.toJSON(),
   };
 };
 
@@ -148,7 +142,7 @@ exports.create = async (ctx) => {
 exports.read = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   ctx.body = {
-    user,
+    user: user.toJSON(),
   };
 };
 
@@ -156,9 +150,14 @@ exports.read = async (ctx) => {
 exports.update = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
   Object.assign(user, ctx.request.body);
+  const { photo } = ctx.request.files;
+  if (photo) {
+    const photoLocation = await uploadS3(config.get('aws').userPhotoFolder, photo);
+    await User.findByIdAndUpdate(ctx.state.user._id, { photo: photoLocation });
+  }
   await user.save();
   ctx.body = {
-    user,
+    user: user.toJSON(),
   };
 };
 
@@ -166,6 +165,6 @@ exports.update = async (ctx) => {
 exports.destroy = async (ctx) => {
   const user = await User.findByIdAndDelete(ctx.params.userID);
   ctx.body = {
-    user,
+    user: user.toJSON(),
   };
 };

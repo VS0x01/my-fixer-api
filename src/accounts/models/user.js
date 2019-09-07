@@ -1,21 +1,20 @@
+/* eslint-disable func-names */
 const crypto = require('crypto');
 const config = require('config');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  name: {
-    first: {
-      type: String,
-      required: true,
-    },
-    last: {
-      type: String,
-      required: true,
-    },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
   },
   photo: {
     type: String,
-    default: 'https://vs0x01-myfixer.s3.eu-central-1.amazonaws.com/avatar_circle_blue_512dp.png',
+    default: config.get('aws').defaultUserPhoto,
   },
   country: {
     type: String,
@@ -46,11 +45,7 @@ const userSchema = new mongoose.Schema({
   salt: {
     type: String,
   },
-});
-
-userSchema.virtual('fullName').get(function () {
-  return `${this.name.first} ${this.name.last}`;
-});
+}, { timestamps: true });
 
 userSchema.virtual('password')
   .set(function (password) {
@@ -74,6 +69,15 @@ userSchema.methods.checkPassword = function (password) {
   return crypto
     .pbkdf2Sync(password, this.salt, config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
     .toString('hex') === this.encryptedPassword;
+};
+
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.encryptedPassword;
+  delete obj.salt;
+  // eslint-disable-next-line no-underscore-dangle
+  delete obj.__v;
+  return obj;
 };
 
 module.exports = mongoose.model('User', userSchema);

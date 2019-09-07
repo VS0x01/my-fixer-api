@@ -1,7 +1,6 @@
 const config = require('config');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const ServerError = require('./ServerError');
 
 const Token = require('../accounts/models/token');
 
@@ -15,7 +14,7 @@ const generateToken = (payload, secrets) => {
 const generateAuthTokens = async (payload, user) => {
   const accessToken = generateToken({
     ...payload,
-    type: 'access'
+    type: 'access',
   }, config.get('jwtSecret').accessToken);
 
   const refreshTokenID = new mongoose.Types.ObjectId();
@@ -32,12 +31,10 @@ const generateAuthTokens = async (payload, user) => {
   };
 };
 
-const verifyRefreshToken = (token) => {
-  return jwt.verify(token.replace(/JWT/, '').trim(), config.get('jwtSecret').refreshToken.secret);
-};
+const verifyToken = (token, secret) => jwt.verify(token.replace(/JWT/, '').trim(), secret);
 
 module.exports = {
   generateToken,
   generateAuthTokens,
-  verifyRefreshToken,
+  verifyToken,
 };

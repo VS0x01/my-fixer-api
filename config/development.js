@@ -25,6 +25,7 @@ module.exports = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     bucketName: 'vs0x01-myfixer',
     userPhotoFolder: 'user-photos',
+    defaultUserPhoto: 'https://vs0x01-myfixer.s3.eu-central-1.amazonaws.com/avatar_circle_blue_512dp.png',
   },
   mailing: {
     apiKey: process.env.SENDGRID_API_KEY,
