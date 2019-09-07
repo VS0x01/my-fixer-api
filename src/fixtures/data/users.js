@@ -5,17 +5,17 @@ const { ObjectId } = require('mongodb');
 module.exports = [
   {
     name: {
-      first: "Test",
-      last: "Admin"
+      first: 'Test',
+      last: 'Admin',
     },
-    role: "admin",
-    country: "Ukraine",
-    email: "test@example.com",
+    role: 'admin',
+    country: 'Ukraine',
+    email: 'test@example.com',
     confirmed: true,
     salt: 'test',
     encryptedPassword: crypto
-        .pbkdf2Sync('qwerty', 'test', config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
-        .toString('hex'),
+      .pbkdf2Sync('qwerty', 'test', config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
+      .toString('hex'),
   },
   {
     _id: ObjectId(),
@@ -29,8 +29,8 @@ module.exports = [
     confirmed: true,
     salt: 'salt0',
     encryptedPassword: crypto
-        .pbkdf2Sync('qwerty', 'salt0', config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
-        .toString('hex'),
+      .pbkdf2Sync('qwerty', 'salt0', config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
+      .toString('hex'),
   },
   {
     _id: ObjectId(),
@@ -44,7 +44,7 @@ module.exports = [
     confirmed: true,
     salt: 'salt1',
     encryptedPassword: crypto
-        .pbkdf2Sync('qwerty', 'salt1', config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
-        .toString('hex'),
+      .pbkdf2Sync('qwerty', 'salt1', config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')
+      .toString('hex'),
   },
 ];

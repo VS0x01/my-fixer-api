@@ -46,10 +46,6 @@ const userSchema = new mongoose.Schema({
   salt: {
     type: String,
   },
-  tokens: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Token',
-  }]
 });
 
 userSchema.virtual('fullName').get(function () {
@@ -57,7 +53,7 @@ userSchema.virtual('fullName').get(function () {
 });
 
 userSchema.virtual('password')
-  .set((password) => {
+  .set(function (password) {
     if (password !== undefined) {
       if (!password) this.invalidate('password', 'Password can\'t be empty!');
       else if (password.length < 6) this.invalidate('password', 'Password can\'t be less than 6 symbols!');
@@ -73,7 +69,7 @@ userSchema.virtual('password')
     }
   });
 
-userSchema.methods.checkPassword = (password) => {
+userSchema.methods.checkPassword = function (password) {
   if (!(password && this.encryptedPassword)) return false;
   return crypto
     .pbkdf2Sync(password, this.salt, config.get('crypto').hash.iterations, config.get('crypto').hash.length, 'sha512')

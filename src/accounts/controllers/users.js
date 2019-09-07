@@ -20,8 +20,9 @@ exports.signIn = async (ctx, next) => {
       const payload = {
         id: user._id,
         role: user.role,
+        confirmed: user.confirmed,
       };
-      const tokens = await jwt.generateAndUpdateTokens(payload, user._id);
+      const tokens = await jwt.generateAuthTokens(payload, user);
       const { accessToken, refreshToken } = tokens;
       ctx.body = {
         user: {
@@ -30,7 +31,7 @@ exports.signIn = async (ctx, next) => {
           photo,
         },
         accessToken: `JWT ${accessToken}`,
-        refreshToken: `JWT ${refreshToken.token}`,
+        refreshToken: `JWT ${refreshToken}`,
       };
     } else {
       throw new ServerError(403, err);
@@ -40,21 +41,38 @@ exports.signIn = async (ctx, next) => {
 
 // GET /accounts/token
 exports.token = async (ctx) => {
-  const decodedRefreshToken = await jwt.verifyRefreshToken(ctx.header.authorization);
-  const refreshToken = await Token.findOne({ tokenID: decodedRefreshToken.id });
+  const decodedRefreshToken = jwt.verifyRefreshToken(ctx.header.authorization);
+  const refreshToken = await Token.findById(decodedRefreshToken._id).populate('user');
   if (!refreshToken) {
     throw new ServerError(404, 'token not found');
   } else if (decodedRefreshToken.type !== 'refresh') throw new ServerError(403, 'invalid token');
 
-  const user = await User.findById(refreshToken.userID);
   const payload = {
-    id: user._id,
-    role: user.role,
+    id: refreshToken.user._id,
+    role: refreshToken.user.role,
+    confirmed: refreshToken.user.confirmed,
   };
-  const tokens = await jwt.generateAndUpdateTokens(payload, refreshToken.userID);
+  const tokens = await jwt.generateAuthTokens(payload, refreshToken.user);
+
+  refreshToken.remove();
+
   ctx.body = {
     accessToken: `JWT ${tokens.accessToken}`,
-    refreshToken: `JWT ${tokens.refreshToken.token}`,
+    refreshToken: `JWT ${tokens.refreshToken}`,
+  };
+};
+
+// DELETE /accounts/token
+exports.logout = async (ctx) => {
+  const { all, refreshToken } = ctx.parameters.permit('all', 'refreshToken').value();
+  if(all) {
+    await Token.deleteMany({ user: ctx.state.user._id });
+  } else if(refreshToken) {
+    const decodedRefreshToken = jwt.verifyRefreshToken(refreshToken);
+    await Token.findOneAndRemove(decodedRefreshToken._id);
+  }
+  ctx.body = {
+    success: true,
   };
 };
 

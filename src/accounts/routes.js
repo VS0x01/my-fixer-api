@@ -7,6 +7,7 @@ const router = new Router();
 // Auth
 router.post('/sign-in', usersController.signIn);
 router.get('/token', usersController.token);
+router.delete('/token', passport.authenticate('jwt', { session: false }), usersController.logout);
 router.post('/confirm', usersController.emailSend);
 
 // router.put('/photo', passport.authenticate('jwt', { session: false }), usersController.updatePhoto);

@@ -1,40 +1,30 @@
 const config = require('config');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const ServerError = require('./ServerError');
 
 const Token = require('../accounts/models/token');
 
-const generateAccessToken = (payload) => {
-  payload.type = 'access';
-  const { secret } = config.get('jwtSecret').accessToken;
+const generateToken = (payload, secrets) => {
   const opts = {
-    expiresIn: config.get('jwtSecret').accessToken.expirationTime,
+    expiresIn: secrets.expirationTime,
   };
-  return jwt.sign(payload, secret, opts);
+  return jwt.sign(payload, secrets.secret, opts);
 };
 
-const generateRefreshToken = () => {
-  const payload = {
-    id: uuid(),
+const generateAuthTokens = async (payload, user) => {
+  const accessToken = generateToken({
+    ...payload,
+    type: 'access'
+  }, config.get('jwtSecret').accessToken);
+
+  const refreshTokenID = new mongoose.Types.ObjectId();
+  const refreshToken = generateToken({
+    _id: refreshTokenID,
     type: 'refresh',
-  };
-  const { secret } = config.get('jwtSecret').refreshToken;
-  const opts = {
-    expiresIn: config.get('jwtSecret').refreshToken.expirationTime,
-  };
-  return {
-    id: payload.id,
-    token: jwt.sign(payload, secret, opts),
-  };
-};
-
-const generateAndUpdateTokens = async (payload, userID) => {
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken();
-
-  await Token.findOneAndUpdate({ userID }, {
-    tokenID: refreshToken.id,
-  });
+  }, config.get('jwtSecret').refreshToken);
+  const refreshTokenFingerprint = new Token({ _id: refreshTokenID, user });
+  await refreshTokenFingerprint.save();
 
   return {
     accessToken,
@@ -42,9 +32,12 @@ const generateAndUpdateTokens = async (payload, userID) => {
   };
 };
 
-const verifyRefreshToken = async token => jwt.verify(token.replace(/JWT/, '').trim(), config.get('jwtSecret').refreshToken.secret);
+const verifyRefreshToken = (token) => {
+  return jwt.verify(token.replace(/JWT/, '').trim(), config.get('jwtSecret').refreshToken.secret);
+};
 
 module.exports = {
-  generateAndUpdateTokens,
+  generateToken,
+  generateAuthTokens,
   verifyRefreshToken,
 };
