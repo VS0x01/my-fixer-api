@@ -13,6 +13,16 @@ const Token = require('../models/token');
 
 nunjucks.configure(path.join(__dirname, '../templates'), { autoescape: true });
 
+exports.jwtAuth = async (ctx, next) => {
+  await passport.authenticate('jwt', {
+    session: false,
+  }, (err, user, info) => {
+    if (err) throw new ServerError(500, err);
+    else if (!user) throw new ServerError(401, info);
+    return next();
+  })(ctx, next);
+};
+
 // POST /accounts/sign-in
 exports.signIn = async (ctx, next) => {
   await passport.authenticate('local', async (err, user) => {
@@ -86,8 +96,8 @@ exports.sendEmailConfirmation = async (ctx) => {
     }
   } else {
     const { _id, firstName, lastName } = ctx.request.body;
-    if(!_id) {
-      throw new ServerError(500, 'account required')
+    if (!_id) {
+      throw new ServerError(500, 'account required');
     }
     const attachments = [
       {

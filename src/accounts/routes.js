@@ -1,20 +1,24 @@
 const Router = require('koa-router');
-const passport = require('koa-passport');
-const usersController = require('./controllers/users');
+const {
+  jwtAuth, signIn, token, logout, sendEmailConfirmation, index, create, read, update, destroy,
+} = require('./controllers/users');
 
 const router = new Router();
 
 // Auth
-router.post('/sign-in', usersController.signIn);
-router.get('/token', usersController.token);
-router.delete('/token', passport.authenticate('jwt', { session: false }), usersController.logout);
-router.post('/confirm', usersController.sendEmailConfirmation);
+router.post('/sign-in', signIn);
+router.post('/confirm', sendEmailConfirmation);
+router.get('/token', token);
+
+router.use(jwtAuth);
+
+router.delete('/token', logout);
 
 // CRUD
-router.get('/', passport.authenticate('jwt', { session: false }), usersController.index);
-router.post('/', usersController.create);
-router.get('/:userID', passport.authenticate('jwt', { session: false }), usersController.read);
-router.put('/:userID', passport.authenticate('jwt', { session: false }), usersController.update);
-router.delete('/:userID', passport.authenticate('jwt', { session: false }), usersController.destroy);
+router.get('/', index);
+router.post('/', create);
+router.get('/:userID', read);
+router.put('/:userID', update);
+router.delete('/:userID', destroy);
 
 module.exports = router;
