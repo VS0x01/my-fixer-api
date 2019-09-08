@@ -19,6 +19,7 @@ exports.jwtAuth = async (ctx, next) => {
   }, (err, user, info) => {
     if (err) throw new ServerError(500, err);
     else if (!user) throw new ServerError(401, info);
+    else ctx.state.user = user;
     return next();
   })(ctx, next);
 };
@@ -165,11 +166,15 @@ exports.read = async (ctx) => {
 // PATCH/PUT /accounts/1
 exports.update = async (ctx) => {
   const user = await User.findById(ctx.params.userID);
-  Object.assign(user, ctx.request.body);
-  const { photo } = ctx.request.files;
-  if (photo) {
-    const photoLocation = await uploadS3(config.get('aws').userPhotoFolder, photo);
-    await User.findByIdAndUpdate(ctx.state.user._id, { photo: photoLocation });
+  const requestData = Object.keys(ctx.request);
+
+  if (requestData.includes('body')) Object.assign(user, ctx.request.body);
+
+  if (requestData.includes('files')) {
+    const { photo } = ctx.request.files;
+    if (photo) {
+      user.photo = await uploadS3(config.get('aws').userPhotoFolder, photo);
+    }
   }
   await user.save();
   ctx.body = {

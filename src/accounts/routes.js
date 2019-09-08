@@ -9,16 +9,13 @@ const router = new Router();
 router.post('/sign-in', signIn);
 router.post('/confirm', sendEmailConfirmation);
 router.get('/token', token);
-
-router.use(jwtAuth);
-
-router.delete('/token', logout);
+router.delete('/token', jwtAuth, logout);
 
 // CRUD
-router.get('/', index);
+router.get('/', jwtAuth, index);
 router.post('/', create);
-router.get('/:userID', read);
-router.put('/:userID', update);
-router.delete('/:userID', destroy);
+router.get('/:userID', jwtAuth, read);
+router.put('/:userID', jwtAuth, update);
+router.delete('/:userID', jwtAuth, destroy);
 
 module.exports = router;
