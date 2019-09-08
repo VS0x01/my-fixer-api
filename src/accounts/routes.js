@@ -12,10 +12,11 @@ router.get('/token', token);
 router.delete('/token', logout);
 
 // CRUD
-router.get('/', jwtAuth, index);
 router.post('/', create);
-router.get('/:userID', jwtAuth, read);
-router.put('/:userID', jwtAuth, update);
-router.delete('/:userID', jwtAuth, destroy);
+router.use(jwtAuth);
+router.get('/', index);
+router.get('/:userID', read);
+router.put('/:userID', update);
+router.delete('/:userID', destroy);
 
 module.exports = router;
