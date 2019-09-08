@@ -72,11 +72,12 @@ exports.token = async (ctx) => {
 // DELETE /accounts/token
 exports.logout = async (ctx) => {
   const { all, refreshToken } = ctx.parameters.permit('all', 'refreshToken').value();
+  const decodedRefreshToken = jwt.verifyToken(refreshToken, config.get('jwtSecret').refreshToken.secret);
+
   if (all) {
-    await Token.deleteMany({ user: ctx.state.user._id });
+    await Token.deleteMany({ user: decodedRefreshToken.userID });
   } else if (refreshToken) {
-    const decodedRefreshToken = jwt.verifyToken(refreshToken, config.get('jwtSecret').refreshToken.secret);
-    await Token.findOneAndRemove(decodedRefreshToken._id);
+    await Token.findByIdAndDelete(decodedRefreshToken._id);
   }
   ctx.body = {
     success: true,

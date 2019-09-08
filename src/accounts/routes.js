@@ -9,7 +9,7 @@ const router = new Router();
 router.post('/sign-in', signIn);
 router.post('/confirm', sendEmailConfirmation);
 router.get('/token', token);
-router.delete('/token', jwtAuth, logout);
+router.delete('/token', logout);
 
 // CRUD
 router.get('/', jwtAuth, index);

@@ -20,6 +20,8 @@ const generateAuthTokens = async (payload, user) => {
   const refreshTokenID = new mongoose.Types.ObjectId();
   const refreshToken = generateToken({
     _id: refreshTokenID,
+    // eslint-disable-next-line no-underscore-dangle
+    userID: user._id,
     type: 'refresh',
   }, config.get('jwtSecret').refreshToken);
   const refreshTokenFingerprint = new Token({ _id: refreshTokenID, user });
