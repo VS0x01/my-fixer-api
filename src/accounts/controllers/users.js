@@ -37,7 +37,7 @@ exports.signIn = async (ctx, next) => {
 
 // GET /accounts/token
 exports.token = async (ctx) => {
-  const decodedRefreshToken = jwt.verifyRefreshToken(ctx.header.authorization);
+  const decodedRefreshToken = jwt.verifyToken(ctx.header.authorization, config.get('jwtSecret').refreshToken.secret);
   const refreshToken = await Token.findById(decodedRefreshToken._id).populate('user');
   if (!refreshToken) {
     throw new ServerError(404, 'token not found');
@@ -78,11 +78,17 @@ exports.sendEmailConfirmation = async (ctx) => {
 
   if (confirmToken) {
     const verifiedConfirmToken = jwt.verifyToken(confirmToken, config.get('jwtSecret').accessToken.secret);
-    if(verifiedConfirmToken.type === "confirm") {
-      User.findByIdAndUpdate(verifiedConfirmToken._id, {confirmed: true});
+    if (verifiedConfirmToken.type === 'confirm') {
+      await User.findByIdAndUpdate(verifiedConfirmToken._id, { confirmed: true });
+      ctx.body = {
+        status: 'Account confirmed',
+      };
     }
   } else {
     const { _id, firstName, lastName } = ctx.request.body;
+    if(!_id) {
+      throw new ServerError(500, 'account required')
+    }
     const attachments = [
       {
         content: Buffer.from(fs.readFileSync('./src/assets/logo.png')).toString('base64'),
