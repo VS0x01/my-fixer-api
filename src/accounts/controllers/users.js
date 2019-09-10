@@ -108,7 +108,7 @@ exports.sendEmailConfirmation = async (ctx) => {
       },
     ];
     const origin = ctx.request.headers.referer;
-    const token = await jwt.generateToken({
+    const token = jwt.generateToken({
       _id,
       type: 'confirm',
     }, config.get('jwtSecret').accessToken);
