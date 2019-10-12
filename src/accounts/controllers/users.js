@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const passport = require('koa-passport');
 const nunjucks = require('nunjucks');
-const ServerError = require('../../utils/ServerError');
 const uploadS3 = require('../../utils/uploadS3');
 const sendEmail = require('../../utils/mailing');
 const jwt = require('../../utils/jwt');
@@ -14,14 +13,13 @@ const Token = require('../models/token');
 nunjucks.configure(path.join(__dirname, '../templates'), { autoescape: true });
 
 exports.jwtAuth = async (ctx, next) => {
-  await passport.authenticate('jwt', {
-    session: false,
-  }, (err, user, info) => {
-    if (err) throw new ServerError(500, err);
-    else if (!user) throw new ServerError(401, info);
-    else ctx.state.user = user;
-    return next();
-  })(ctx, next);
+  await passport.authenticate('jwt', { session: false },
+    (err, user, info) => {
+      if (err) throw err;
+      else if (!user) throw info;
+      else ctx.state.user = user;
+      return next();
+    })(ctx, next);
 };
 
 // POST /accounts/sign-in
@@ -41,7 +39,7 @@ exports.signIn = async (ctx, next) => {
         refreshToken: `JWT ${refreshToken}`,
       };
     } else {
-      throw new ServerError(403, err);
+      throw err;
     }
   })(ctx, next);
 };
@@ -51,8 +49,8 @@ exports.token = async (ctx) => {
   const decodedRefreshToken = jwt.verifyToken(ctx.header.authorization, config.get('jwtSecret').refreshToken.secret);
   const refreshToken = await Token.findById(decodedRefreshToken._id).populate('user');
   if (!refreshToken) {
-    throw new ServerError(404, 'token not found');
-  } else if (decodedRefreshToken.type !== 'refresh') throw new ServerError(403, 'invalid token');
+    throw new Error('RefreshTokenError: token not found');
+  } else if (decodedRefreshToken.type !== 'refresh') throw new Error('RefreshTokenError: invalid token');
 
   const payload = {
     id: refreshToken.user._id,
@@ -99,7 +97,7 @@ exports.sendEmailConfirmation = async (ctx) => {
   } else {
     const { _id, firstName, lastName } = ctx.request.body;
     if (!_id) {
-      throw new ServerError(500, 'account required');
+      throw new Error('account required');
     }
     const attachments = [
       {
