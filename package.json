@@ -15,20 +15,20 @@
   "author": "VS0x01",
   "license": "ISC",
   "dependencies": {
-    "@koa/cors": "^2.2.3",
-    "@sendgrid/mail": "^6.5.5",
-    "aws-sdk": "^2.678.0",
+    "@koa/cors": "^3.1.0",
+    "@sendgrid/mail": "^7.1.1",
+    "aws-sdk": "^2.683.0",
     "config": "^3.3.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.12.0",
-    "koa-body": "^4.1.2",
-    "koa-helmet": "^4.2.1",
+    "koa-body": "^4.1.3",
+    "koa-helmet": "^5.2.0",
     "koa-passport": "^4.1.3",
-    "koa-router": "^7.4.0",
+    "koa-router": "^8.0.8",
     "koa-static": "^5.0.0",
-    "koa2-swagger-ui": "^2.16.0",
+    "koa2-swagger-ui": "^3.0.0",
     "mongodb": "^3.5.7",
-    "mongoose": "^5.9.14",
+    "mongoose": "^5.9.16",
     "mongoose-beautiful-unique-validation": "^7.1.1",
     "node-mongodb-fixtures": "^3.2.4",
     "nunjucks": "^3.2.1",
@@ -39,14 +39,14 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint": "^7.1.0",
+    "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
-    "mocha": "^6.2.3",
-    "nodemon": "^1.19.4"
+    "mocha": "^7.2.0",
+    "nodemon": "^2.0.4"
   },
   "engines": {
-    "node": "10.16.3",
-    "npm": "6.9.0"
+    "node": "12.16.3",
+    "npm": "6.14.4"
   }
 }
