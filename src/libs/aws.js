@@ -2,8 +2,8 @@ const config = require('config');
 const AWS = require('aws-sdk');
 
 const options = {
-  accessKeyId: config.get('aws').accessKeyID,
-  secretAccessKey: config.get('aws').secretAccessKey,
+  accessKeyId: config.get('storage.aws').accessKeyID,
+  secretAccessKey: config.get('storage.aws').secretAccessKey,
 };
 
 AWS.config.update(options);

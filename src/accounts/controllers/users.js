@@ -131,7 +131,7 @@ exports.sendEmailConfirmation = async (ctx) => {
 // GET /accounts
 exports.index = async (ctx) => {
   const users = await User.find({});
-  users.forEach(user => user.toJSON());
+  users.forEach((user) => user.toJSON());
   ctx.body = {
     users,
   };

@@ -1,4 +1,4 @@
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const {
   jwtAuth, signIn, token, logout, sendEmailConfirmation, index, create, read, update, destroy,
 } = require('./controllers/users');

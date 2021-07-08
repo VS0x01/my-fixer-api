@@ -5,6 +5,7 @@ const beautifyUnique = require('mongoose-beautiful-unique-validation');
 const uri = config.get('databaseUrl');
 mongoose.connect(uri, {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
   useFindAndModify: false,
   useCreateIndex: true,
 });

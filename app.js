@@ -5,7 +5,7 @@ const cors = require('@koa/cors');
 const helmet = require('koa-helmet');
 const bodyParser = require('koa-body')({ multipart: true });
 const params = require('strong-params');
-const Router = require('koa-router');
+const Router = require('@koa/router');
 require('./src/libs/mongoose');
 const swagger = require('koa2-swagger-ui');
 const passport = require('./src/libs/passport/index');

@@ -20,14 +20,19 @@ module.exports = {
       expirationTime: process.env.JWT_SECRET_REFRESH_TOKEN_EXPIRATION_TIME,
     },
   },
-  aws: {
-    accessKeyID: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    bucketName: process.env.AWS_BUCKET_NAME,
-    userPhotoFolder: process.env.AWS_USER_PHOTO_FOLDER,
-    defaultUserPhoto: process.env.DEFAULT_USER_PHOTO,
+  storage: {
+    method: process.env.STORAGE_METHOD,
+    aws: {
+      accessKeyID: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      bucketName: process.env.AWS_BUCKET_NAME,
+      userPhotoFolder: process.env.AWS_USER_PHOTO_FOLDER,
+      defaultUserPhoto: process.env.DEFAULT_USER_PHOTO,
+    },
   },
   mailing: {
-    apiKey: process.env.SENDGRID_API_KEY,
+    sendGrid: {
+      apiKey: process.env.SENDGRID_API_KEY,
+    },
   },
 };

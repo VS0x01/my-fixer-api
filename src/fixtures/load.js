@@ -13,5 +13,5 @@ fixtures
   .then(() => fixtures.unload())
   .then(() => fixtures.load())
   // eslint-disable-next-line no-console
-  .catch(e => console.error(e))
+  .catch((e) => console.error(e))
   .finally(() => fixtures.disconnect());

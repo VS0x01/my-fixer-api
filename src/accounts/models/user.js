@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: config.get('aws').defaultUserPhoto,
+    default: config.get('storage.aws').defaultUserPhoto,
   },
   country: {
     type: String,
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
         const re = /^(\S+)@([a-z0-9-]+)(\.)([a-z]{2,4})(\.?)([a-z]{0,4})+$/;
         return re.test(value);
       },
-      message: props => `${props.value} is not a valid email.`,
+      message: (props) => `${props.value} is not a valid email.`,
     },
   },
   confirmed: {
