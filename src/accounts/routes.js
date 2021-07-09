@@ -8,7 +8,7 @@ const router = new Router();
 
 // Auth
 router.post('/sign-in', signIn);
-router.post('/confirm', sendEmailConfirmation);
+router.put('/confirm', sendEmailConfirmation);
 router.get('/token', token);
 
 // CRUD

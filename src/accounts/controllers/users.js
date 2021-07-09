@@ -61,7 +61,7 @@ exports.token = async (ctx) => {
   };
 };
 
-// POST /accounts/confirm
+// PATCH/PUT /accounts/confirm
 exports.sendEmailConfirmation = async (ctx) => {
   const { confirmToken } = ctx.parameters.permit('token').value();
 

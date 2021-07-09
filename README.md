@@ -7,17 +7,18 @@
 
     - Auth: 
 
-        | Method        | Endpoint          |
-        |:-------------:|:-----------------:|
-        | POST          | /accounts/sign-in |
-        | GET           | /accounts/token   |
+        | Method        | Endpoint          | Parameters        |
+        |:-------------:|:-----------------:|:-----------------:|
+        | POST          | /accounts/sign-in |                   |
+        | PATCH/PUT     | /confirm          | token             |
+        | GET           | /accounts/token   |                   |
     
     - CRUD:
     
-        | Method        | Endpoint          |
-        |:-------------:| ----------------- |
-        | GET           | /accounts         |
-        | POST          | /accounts         |
-        | GET           | /accounts/:id     |
-        | PATCH/PUT     | /accounts/:id     |
-        | DELETE        | /accounts/:id     |
+        | Method        | Endpoint          | Parameters        |
+        |:-------------:| ----------------- | ----------------- |
+        | GET           | /accounts         |                   |
+        | POST          | /accounts         |                   |
+        | GET           | /accounts/:id     |                   |
+        | PATCH/PUT     | /accounts/:id     |                   |
+        | DELETE        | /accounts/:id     |                   |
