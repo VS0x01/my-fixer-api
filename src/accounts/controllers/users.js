@@ -48,12 +48,17 @@ exports.signIn = async (ctx, next) => {
 // GET /accounts/token
 exports.token = async (ctx) => {
   const decodedToken = jwt.verifyToken(ctx.header.authorization, config.get('jwtSecret').refreshToken.secret);
+  const user = await User.findById(decodedToken._id);
+  if (user.lastToken > decodedToken.iat) ctx.throw(403, 'TokenExpiredError');
 
   const payload = decodedToken;
   delete payload.iat;
   delete payload.exp;
   delete payload.type;
   const tokens = await jwt.generateAuthTokens(payload);
+  user.lastToken = tokens.refreshToken.iat;
+
+  await user.save();
 
   ctx.body = {
     accessToken: `JWT ${tokens.accessToken}`,
@@ -75,9 +80,7 @@ exports.sendEmailConfirmation = async (ctx) => {
     }
   } else {
     const { _id, firstName, lastName } = ctx.request.body;
-    if (!_id) {
-      throw new Error('account required');
-    }
+    if (!_id) ctx.throw(403, 'account required');
     const attachments = [
       {
         content: Buffer.from(fs.readFileSync('./src/assets/logo.png')).toString('base64'),

@@ -45,6 +45,9 @@ const userSchema = new mongoose.Schema({
   salt: {
     type: String,
   },
+  lastToken: {
+    type: Number,
+  },
 }, { timestamps: true });
 
 userSchema.virtual('password')
@@ -75,6 +78,7 @@ userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.encryptedPassword;
   delete obj.salt;
+  delete obj.lastToken;
   // eslint-disable-next-line no-underscore-dangle
   delete obj.__v;
   return obj;
