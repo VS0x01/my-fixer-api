@@ -3,6 +3,7 @@ const Koa = require('koa');
 const serve = require('koa-static');
 const cors = require('@koa/cors');
 const helmet = require('koa-helmet');
+require('./src/libs/mongoose');
 const bodyParser = require('koa-body')({ multipart: true });
 const params = require('strong-params');
 const Router = require('@koa/router');
