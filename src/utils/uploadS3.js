@@ -12,7 +12,7 @@ module.exports = (folder, file) => new Promise((resolve, reject) => {
 
   s3.upload(
     {
-      Bucket: config.get('aws').bucketName,
+      Bucket: config.get('storage.aws').bucketName,
       Key: filename,
       Body: fs.createReadStream(file.path),
     },

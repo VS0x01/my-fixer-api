@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: config.get('storage.aws').defaultUserPhoto,
+    default: config.get(`storage.${config.get('storage.method')}`).defaultUserPhoto,
   },
   country: {
     type: String,

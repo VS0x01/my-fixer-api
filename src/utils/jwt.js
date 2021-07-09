@@ -1,8 +1,5 @@
 const config = require('config');
-const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-
-const Token = require('../accounts/models/token');
 
 const generateToken = (payload, secrets) => {
   const opts = {
@@ -11,21 +8,16 @@ const generateToken = (payload, secrets) => {
   return jwt.sign(payload, secrets.secret, opts);
 };
 
-const generateAuthTokens = async (payload, user) => {
+const generateAuthTokens = async (payload) => {
   const accessToken = generateToken({
     ...payload,
     type: 'access',
   }, config.get('jwtSecret').accessToken);
 
-  const refreshTokenID = new mongoose.Types.ObjectId();
   const refreshToken = generateToken({
-    _id: refreshTokenID,
-    // eslint-disable-next-line no-underscore-dangle
-    userID: user._id,
+    ...payload,
     type: 'refresh',
   }, config.get('jwtSecret').refreshToken);
-  const refreshTokenFingerprint = new Token({ _id: refreshTokenID, user });
-  await refreshTokenFingerprint.save();
 
   return {
     accessToken,

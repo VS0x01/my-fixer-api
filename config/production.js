@@ -22,12 +22,12 @@ module.exports = {
   },
   storage: {
     method: process.env.STORAGE_METHOD,
+    userPhotoFolder: process.env.USER_PHOTO_FOLDER,
     aws: {
       accessKeyID: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       bucketName: process.env.AWS_BUCKET_NAME,
-      userPhotoFolder: process.env.AWS_USER_PHOTO_FOLDER,
-      defaultUserPhoto: process.env.DEFAULT_USER_PHOTO,
+      defaultUserPhoto: process.env.AWS_DEFAULT_USER_PHOTO,
     },
   },
   mailing: {

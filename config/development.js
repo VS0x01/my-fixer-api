@@ -21,12 +21,15 @@ module.exports = {
     },
   },
   storage: {
-    method: 'local',
+    method: 'mongo',
+    userPhotoFolder: 'user-photos',
+    mongo: {
+      defaultUserPhoto: '',
+    },
     aws: {
       accessKeyID: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       bucketName: 'vs0x01-myfixer',
-      userPhotoFolder: 'user-photos',
       defaultUserPhoto: 'https://vs0x01-myfixer.s3.eu-central-1.amazonaws.com/avatar_circle_blue_512dp.png',
     },
   },

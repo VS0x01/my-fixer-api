@@ -5,10 +5,11 @@ const fs = require('fs');
 const passport = require('koa-passport');
 const nunjucks = require('nunjucks');
 const uploadS3 = require('../../utils/uploadS3');
+const { uploadMongo } = require('../../utils/gridfsMongo');
 const sendEmail = require('../../utils/mailing');
+
 const jwt = require('../../utils/jwt');
 const User = require('../models/user');
-const Token = require('../models/token');
 
 nunjucks.configure(path.join(__dirname, '../templates'), { autoescape: true });
 
@@ -31,7 +32,7 @@ exports.signIn = async (ctx, next) => {
         role: user.role,
         confirmed: user.confirmed,
       };
-      const tokens = await jwt.generateAuthTokens(payload, user);
+      const tokens = await jwt.generateAuthTokens(payload);
       const { accessToken, refreshToken } = tokens;
       ctx.body = {
         user: user.toJSON(),
@@ -46,39 +47,17 @@ exports.signIn = async (ctx, next) => {
 
 // GET /accounts/token
 exports.token = async (ctx) => {
-  const decodedRefreshToken = jwt.verifyToken(ctx.header.authorization, config.get('jwtSecret').refreshToken.secret);
-  const refreshToken = await Token.findById(decodedRefreshToken._id).populate('user');
-  if (!refreshToken) {
-    throw new Error('RefreshTokenError: token not found');
-  } else if (decodedRefreshToken.type !== 'refresh') throw new Error('RefreshTokenError: invalid token');
+  const decodedToken = jwt.verifyToken(ctx.header.authorization, config.get('jwtSecret').refreshToken.secret);
 
-  const payload = {
-    id: refreshToken.user._id,
-    role: refreshToken.user.role,
-    confirmed: refreshToken.user.confirmed,
-  };
-  const tokens = await jwt.generateAuthTokens(payload, refreshToken.user);
-
-  refreshToken.remove();
+  const payload = decodedToken;
+  delete payload.iat;
+  delete payload.exp;
+  delete payload.type;
+  const tokens = await jwt.generateAuthTokens(payload);
 
   ctx.body = {
     accessToken: `JWT ${tokens.accessToken}`,
     refreshToken: `JWT ${tokens.refreshToken}`,
-  };
-};
-
-// DELETE /accounts/token
-exports.logout = async (ctx) => {
-  const { all, refreshToken } = ctx.parameters.permit('all', 'refreshToken').value();
-  const decodedRefreshToken = jwt.verifyToken(refreshToken, config.get('jwtSecret').refreshToken.secret);
-
-  if (all) {
-    await Token.deleteMany({ user: decodedRefreshToken.userID });
-  } else if (refreshToken) {
-    await Token.findByIdAndDelete(decodedRefreshToken._id);
-  }
-  ctx.body = {
-    success: true,
   };
 };
 
@@ -172,7 +151,19 @@ exports.update = async (ctx) => {
   if (requestData.includes('files')) {
     const { photo } = ctx.request.files;
     if (photo) {
-      user.photo = await uploadS3(config.get('aws').userPhotoFolder, photo);
+      const uploadMethod = config.get('storage').method;
+      switch (uploadMethod) {
+        case 'mongo':
+          user.photo = await new Promise((resolve) => {
+            uploadMongo(user._id, photo, resolve);
+          });
+          break;
+        case 'aws':
+          user.photo = await uploadS3(config.get('storage').userPhotoFolder, photo);
+          break;
+        default:
+          break;
+      }
     }
   }
   await user.save();
