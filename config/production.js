@@ -23,6 +23,9 @@ module.exports = {
   storage: {
     method: process.env.STORAGE_METHOD,
     userPhotoFolder: process.env.USER_PHOTO_FOLDER,
+    mongo: {
+      defaultUserPhoto: process.env.MONGO_DEFAULT_USER_PHOTO,
+    },
     aws: {
       accessKeyID: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
